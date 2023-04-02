@@ -6,15 +6,15 @@ const connectToDatabase = require('./config/databse')
 dotenv.config({path:'backend/config/config.env'})
 //connect ro database
 connectToDatabase()
-const port = process.env.PORT || 3000
+const PORT = process.env.PORT || 3000
 cloudinary.config({
     cloud_name:process.env.CLOUDINARY_NAME,
     api_key:process.env.CLOUDINARY_API_KEY,
     api_secret:process.env.CLOUDINARY_API_SECRET
 })
 
-const server =app.listen(port,()=>{
-    console.log(`server is working on https://localhost:${port}`)
+const server =app.listen(PORT,()=>{
+    console.log(`server is working on https://localhost:${PORT}`)
 })
 
 // handling uncught error like we use a thing that is not defined
