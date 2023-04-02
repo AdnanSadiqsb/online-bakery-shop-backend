@@ -6,14 +6,14 @@ const connectToDatabase = require('./config/databse')
 dotenv.config({path:'backend/config/config.env'})
 //connect ro database
 connectToDatabase()
-const port=4000;
+const port = process.env.PORT || 3000
 cloudinary.config({
     cloud_name:process.env.CLOUDINARY_NAME,
     api_key:process.env.CLOUDINARY_API_KEY,
     api_secret:process.env.CLOUDINARY_API_SECRET
 })
 
-const server =app.listen(process.env.PORT || port,()=>{
+const server =app.listen(port,()=>{
     console.log(`server is working on https://localhost:${port}`)
 })
 
