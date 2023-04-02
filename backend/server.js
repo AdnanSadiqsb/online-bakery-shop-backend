@@ -1,9 +1,10 @@
 const app= require('./app')
 const dotenv= require('dotenv')
 const cloudinary= require('cloudinary')
-const connectToDatabase = require('./config/databse')
-//config env file
 dotenv.config({path:'backend/config/config.env'})
+const connectToDatabase = require('./config/databse')
+console.log(what);
+//config env file
 //connect ro database
 connectToDatabase()
 const PORT = process.env.PORT || 4000
