@@ -3,12 +3,12 @@ const cors=require('cors')
 const app=express()
 const bodyParser=require('body-parser')
 const fileUpload=require('express-fileupload')
-// app.use(cors({
-//     origin: 'http://localhost:3000',
-//     credentials: true,
-// }));
-const dotenv=require('dotenv')
 
+const dotenv=require('dotenv')
+app.use(express.json({
+    limit: '50mb'
+  }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 dotenv.config({path:'backend/config/config.env'})
 app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
 const cookieParser=require('cookie-parser')
@@ -17,8 +17,8 @@ app.use(cookieParser());
 //for image upload
 app.use(bodyParser.urlencoded({extended:true}))
 app.use(fileUpload())
-app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({ limit: "50mb", extended: true }));
+
+
 const errorMiddleware= require('./middleware/error')
 //rote imports
 const userRoute=require('./routes/userRoutes')

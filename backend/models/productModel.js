@@ -11,6 +11,10 @@ const productSchema=new mongoose.Schema({
         type:String,
         required:[true,"please enter description"]
     },
+    shortDescription:{
+        type:String,
+        required:[true,"please enter short discription"]
+    },
     price:{
         type:Number,
         required:[true,"please enter Product PRice"],
@@ -68,6 +72,10 @@ const productSchema=new mongoose.Schema({
                 type:String,
                 required:true
             },
+            cratedAt:{
+                type:Date,
+                default:Date.now
+            }
         }
     ],
     user:{
