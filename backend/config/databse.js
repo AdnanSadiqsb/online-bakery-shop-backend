@@ -5,7 +5,7 @@ const connectToDatabase=()=>{
         console.log(`mongo db is connected with server ${data.connection.host}`)
     
     }).catch(()=>{
-        console.log("mongo db is not connected with server")
+        console.log("mongo db is not connected with server internal error")
         process.exit(1)
     })
 }
