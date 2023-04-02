@@ -18,7 +18,9 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended:true}))
 app.use(fileUpload())
 
-
+app.get('/', function (req, res) {
+    res.status(200).send('Welcome to Online Bakery shop');
+  });
 const errorMiddleware= require('./middleware/error')
 //rote imports
 const userRoute=require('./routes/userRoutes')

@@ -6,7 +6,7 @@ const connectToDatabase = require('./config/databse')
 dotenv.config({path:'backend/config/config.env'})
 //connect ro database
 connectToDatabase()
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 4000
 cloudinary.config({
     cloud_name:process.env.CLOUDINARY_NAME,
     api_key:process.env.CLOUDINARY_API_KEY,
