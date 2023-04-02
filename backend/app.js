@@ -1,7 +1,7 @@
 const express= require('express')
 const cors=require('cors')
-app.use(cors())
 const app=express()
+// app.use(cors())
 const bodyParser=require('body-parser')
 const fileUpload=require('express-fileupload')
 
@@ -11,7 +11,7 @@ app.use(express.json({
   }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 dotenv.config({path:'backend/config/config.env'})
-// app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
+app.use(cors({credentials: true, origin: 'https://teal-crazy-chicken.cyclic.app'}));
 const cookieParser=require('cookie-parser')
 app.use(express.json())
 app.use(cookieParser());
