@@ -10,7 +10,7 @@ app.use(express.json({
   }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 dotenv.config({path:'backend/config/config.env'})
-app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
+// app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
 const cookieParser=require('cookie-parser')
 app.use(express.json())
 app.use(cookieParser());
