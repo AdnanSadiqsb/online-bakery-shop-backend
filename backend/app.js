@@ -7,11 +7,17 @@ const fileUpload=require('express-fileupload')
 
 const dotenv=require('dotenv')
 app.use(express.json({
-    limit: '50mb'
-  }));
+  limit: '50mb'
+}));
+const corsOptions = {
+  optionsSuccessStatus: 200, // For legacy browser support
+  credentials: true, // This is important.
+  origin: "https://teal-crazy-chicken.cyclic.app",
+};
+app.use(cors(corsOptions));
+// app.use(cors({credentials: true, origin: 'http://localhost:3001'}));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 dotenv.config({path:'backend/config/config.env'})
-app.use(cors({credentials: true, origin: 'https://teal-crazy-chicken.cyclic.app'}));
 const cookieParser=require('cookie-parser')
 app.use(express.json())
 app.use(cookieParser());
