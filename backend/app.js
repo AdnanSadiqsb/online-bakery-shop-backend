@@ -12,10 +12,10 @@ app.use(express.json({
 const corsOptions = {
   optionsSuccessStatus: 200, // For legacy browser support
   credentials: true, // This is important.
-  origin: "https://teal-crazy-chicken.cyclic.app",
+  origin: "https://fyp-onile-bakery-shop.netlify.app",
 };
-app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
-// app.use(cors(corsOptions));
+// app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
+app.use(cors(corsOptions));
 
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 dotenv.config({path:'backend/config/config.env'})
