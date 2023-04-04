@@ -14,7 +14,7 @@ const corsOptions = {
   credentials: true, // This is important.
   origin: "https://teal-crazy-chicken.cyclic.app",
 };
-app.use(cors({credentials: true, origin: 'http://localhost:3001'}));
+app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
 // app.use(cors(corsOptions));
 
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
