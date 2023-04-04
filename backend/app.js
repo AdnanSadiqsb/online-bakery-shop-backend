@@ -14,8 +14,9 @@ const corsOptions = {
   credentials: true, // This is important.
   origin: "https://teal-crazy-chicken.cyclic.app",
 };
-app.use(cors(corsOptions));
-// app.use(cors({credentials: true, origin: 'http://localhost:3001'}));
+app.use(cors({credentials: true, origin: 'http://localhost:3001'}));
+// app.use(cors(corsOptions));
+
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 dotenv.config({path:'backend/config/config.env'})
 const cookieParser=require('cookie-parser')
