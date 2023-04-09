@@ -192,7 +192,6 @@ exports.createProductReview=catchAsyncError(
         else{
             product.reviews.push(review)
             product.numOfReviews=product.reviews.length
-
         }
         let avg=0
         product.reviews.forEach(rev=>{

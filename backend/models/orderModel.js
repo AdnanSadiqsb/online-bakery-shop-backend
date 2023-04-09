@@ -18,6 +18,10 @@ const orderSchema= new mongoose.Schema({
             type:Number,
             required:true
         },
+        province:{
+            type:String,
+            required:true
+        },
 
     },
     orderItems:[{
@@ -51,10 +55,13 @@ const orderSchema= new mongoose.Schema({
     },
     paymentInfo:{
         id:{
-            type:String,
-            required:true
+            type:String
         },
         status:{
+            type:String,
+            default:"Pending"
+        },
+        paymentMethod:{
             type:String,
             required:true
         }
@@ -82,6 +89,9 @@ const orderSchema= new mongoose.Schema({
         type:Number,
         default:0,
         reuired:true
+    },
+    ordernote:{
+        type:String
     },
     orderStatus:{
         type:String,
