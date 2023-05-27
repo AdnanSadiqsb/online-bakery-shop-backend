@@ -14,9 +14,9 @@ const corsOptions = {
   credentials: true, // This is important.
   origin: "https://fyp-onile-bakery-shop.netlify.app",
 };
-app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
+// app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
 //use this when project become live and comment above line
-// app.use(cors(corsOptions));
+app.use(cors(corsOptions));
 
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 dotenv.config({path:'backend/config/config.env'})

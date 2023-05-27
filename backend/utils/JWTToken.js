@@ -24,7 +24,8 @@
 
 
 //may use this when live
-
+domainurl="https://fyp-onile-bakery-shop.netlify.app/"  //live
+localurl="http://localhost:3000/"
 const sendToken = (user, statusCode, res) => {
     const token = user.getJWTToken()
   
