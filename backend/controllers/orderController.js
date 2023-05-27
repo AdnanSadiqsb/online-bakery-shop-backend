@@ -54,7 +54,7 @@ exports.getLogedUserOrders=catchAsyncError(
     async(req,res,next)=>{
         //populate take the id of user in order table ang get name and email according to id
         
-        const order= await Order.find({user:req.user._id})
+        const order= await Order.find({user:req.user._id}).sort({createdAt: 'desc' })
 
         res.status(200).json(
             {
@@ -65,38 +65,82 @@ exports.getLogedUserOrders=catchAsyncError(
     }
 )
 
-// get all orders --Admin
-exports.getAllOrders=catchAsyncError(
+
+//get all orders of users
+exports.getAllOrdersOfUsers=catchAsyncError(
     async(req,res,next)=>{
-        //populate take the id of user in order table ang get name and email according to id
-        
-        const orders= await Order.find().populate("user", "name email")
-        let deliverdOrders=0
-        let totalAmount=0
-        let deliverdOrdersAmount=0
-        orders.forEach(order=>{
-            totalAmount+=order.totalPrice
-            if(order.orderStatus==='Delivered')
-            {
-                deliverdOrders +=1
-                deliverdOrdersAmount=order.totalPrice
-
-            }
-        })
-
+        const order= await Order.find({user:req.params.id}).sort({createdAt: 'desc' })
         res.status(200).json(
             {
               success:true,
-              totalAmount,
-              deliverdOrders,
-              ordersUnderProcess:orders.length-deliverdOrders,
-              deliverdOrdersAmount,
-              undeProcessOrderAmount:totalAmount-deliverdOrdersAmount,
-              orders
+              order  
             }
         )
     }
 )
+
+// get all orders --Admin
+exports.getAllOrders = catchAsyncError(async(req, res, next) => {
+    let startDate;
+    let endDate;
+  
+    //check if date range is specified in request
+    if (req.query.startDate && req.query.endDate) {
+      startDate = new Date(req.query.startDate);
+      endDate = new Date(req.query.endDate);
+    } else {
+        //set default date range to all orders
+        startDate = new Date(0); //start from the beginning of time
+        endDate = new Date();
+        endDate.setHours(23,59,59,999); //end at the last minute of the current day
+      }
+  
+    //determine the start and end date based on query parameter
+    if (req.query.range === 'lastWeek') {
+      startDate = new Date();
+      startDate.setDate(startDate.getDate() - 7);
+    } else if (req.query.range === 'lastMonth') {
+      startDate = new Date();
+      startDate.setMonth(startDate.getMonth() - 1);
+    } else if (req.query.range === 'lastYear') {
+      startDate = new Date();
+      startDate.setFullYear(startDate.getFullYear() - 1);
+    } else if (req.query.range === 'today') {
+      startDate = new Date();
+      endDate = new Date();
+      startDate.setHours(0,0,0,0);
+      endDate.setHours(23,59,59,999);
+    }
+  
+    //find all orders within specified date range and populate user information
+    const orders = await Order.find({
+      createdAt: { $gte: startDate, $lte: endDate }
+    }).populate("user", "name email").sort({createdAt: 'desc'});
+  
+    //calculate statistics for orders within date range
+    let deliveredOrders = 0;
+    let totalAmount = 0;
+    let deliveredOrdersAmount = 0;
+  
+    orders.forEach(order => {
+      totalAmount += order.totalPrice;
+      if (order.orderStatus === 'delivered') {
+        deliveredOrders += 1;
+        deliveredOrdersAmount += order.totalPrice;
+      }
+    });
+  
+    res.status(200).json({
+      success: true,
+      totalAmount,
+      deliveredOrders,
+      ordersUnderProcess: orders.length - deliveredOrders,
+      deliveredOrdersAmount,
+      undeProcessOrderAmount: totalAmount - deliveredOrdersAmount,
+      orders
+    });
+  });
+  
 
 // update Order Status --Admin
 exports.updateOrderStatus=catchAsyncError(
@@ -104,13 +148,13 @@ exports.updateOrderStatus=catchAsyncError(
         //populate take the id of user in order table ang get name and email according to id
         
         const order= await Order.findById(req.params.id)
-        console.log(order)
+   
         if(!order){
             return next(new ErrorHandler("Order not found",404))
 
 
         }
-        if(order.orderStatus==='Delivered')
+        if(order.orderStatus==='delivered')
         {
             return next(new ErrorHandler("you have already delivered this order",404))
 
@@ -120,12 +164,15 @@ exports.updateOrderStatus=catchAsyncError(
             await updateStock(order.product,order.quantity)
         });
         order.orderStatus=req.body.status;
-        if(req.body.status==="Delivered")
+        if(req.body.status==="delivered")
         {
 
-            Order.deliverdAt=Date.now()
+            order.deliverdAt=Date.now()
+            order.paymentInfo.status='Paid'
+            console.log("order deliverd");
         }
         await order.save({validateBeforeSave:false})
+        console.log("saved");
         res.status(200).json(
             {
               success:true,
@@ -136,10 +183,15 @@ exports.updateOrderStatus=catchAsyncError(
 )
 
 async function updateStock(id,quantity){
-    const product = await Product.findById(id)
-    console.log(product)
-    product.stock -= quantity
-    await product.save({validateBeforeSave:false})
+    try{
+
+        const product = await Product.findById(id)
+        console.log(product)
+        product.stock -= quantity
+        await product.save({validateBeforeSave:false})
+    }catch{
+
+    }
 }
 
 
@@ -163,3 +215,23 @@ exports.deleteOrder=catchAsyncError(
     }
 )
 
+
+//get orders summary --Admin
+exports.getOrdersSummary=catchAsyncError(
+    async(req,res,next)=>{
+        //populate take the id of user in order table ang get name and email according to id
+        
+      
+        const processingOrdersCount = await Order.countDocuments({ orderStatus: 'processing' });
+        const readyToShipOrdersCount = await Order.countDocuments({ orderStatus: 'readytoship' });
+        const ontheWay = await Order.countDocuments({ orderStatus: 'ontheway' });
+        const deliveredOrdersCount = await Order.countDocuments({ orderStatus: 'delivered' });
+        const summary=[processingOrdersCount, readyToShipOrdersCount, ontheWay, deliveredOrdersCount]
+        res.status(200).json(
+            {
+              success:true,
+              summary
+            }
+        )
+    }
+)

@@ -36,11 +36,12 @@ const userRoute=require('./routes/userRoutes')
 const productRoute=require('./routes/productRoutes')
 const orderRoute=require('./routes/orderRoutes')
 const paymentRoute= require('./routes/paymentRoutes')
+const categoryRoute= require('./routes/categoryRoutes')
 app.use("/api/v1",productRoute);
 app.use('/api/v1',userRoute);
 app.use("/api/v1",orderRoute);
-app.use('/api/v1', paymentRoute)
-
+app.use('/api/v1', paymentRoute);
+app.use('/api/v1', categoryRoute);
 // Middleware for error
 app.use(errorMiddleware)
 

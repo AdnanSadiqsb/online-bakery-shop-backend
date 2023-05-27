@@ -14,7 +14,7 @@ router.route('/me').get(isAuthenciatedUser, getUserDetail)
 router.route('/me/update').put(isAuthenciatedUser, updateProfile)
 
 router.route('/password/update').put (isAuthenciatedUser, updatePassword)
-router.route('/admin/users').get(isAuthenciatedUser, authorizeRole('admin'), getAllUsers)
+router.route('/admin/users').post(isAuthenciatedUser, authorizeRole('admin'), getAllUsers)
 router.route('/admin/user/:id').get(isAuthenciatedUser, authorizeRole('admin'), getSingleUser).put(isAuthenciatedUser, authorizeRole('admin'), updateUserRole).delete(isAuthenciatedUser, authorizeRole('admin'),deleteUser)
 
 module.exports=router

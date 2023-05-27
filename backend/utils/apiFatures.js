@@ -42,7 +42,7 @@ class Apifeatures{
     sortAsNew(resultPerPage){
         if(this.queryStr.new)
         {
-            this.query=this.query.find().sort({cratedAt:-1}).limit(resultPerPage)
+            this.query=this.query.find().sort({cratedAt:'desc'}).limit(resultPerPage)
 
         }
         return this

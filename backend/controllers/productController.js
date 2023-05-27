@@ -5,45 +5,71 @@ const catchAsyncError=require('../middleware/catchAsyncError')
 const Apifeatures = require('../utils/apiFatures')
 const cloudinary =require('cloudinary')
 //Create product controller --Admin
-exports.createProduct=catchAsyncError(
-    async (req,res, next)=>{
-        let images=[]
-      
-        if(typeof( req.body.images)==="string")
-        {
-            images.push(req.body.images)
-        }
-        else{
-            images=req.body.images
-        }
-        const imagesLink=[]
-        for(let i=0; i<images.length;i++)
-        {
-           const result= await cloudinary.v2.uploader.upload(images[i],{
-            folder:"products"
-           });
-           imagesLink.push({
-            public_id:result.public_id,
-            url:result.secure_url
-           })
-        }
-        req.body.images=imagesLink
-        req.body.user=req.user.id
-        const product = await Product.create(req.body);
-        res.status(200).json({
-            success:true,
-            product
-        })
-    
+exports.createProduct = catchAsyncError(async (req, res, next) => {
+    let images = [];
+  
+    if (typeof req.body.images === "string") {
+      images.push(req.body.images);
+    } else {
+      images = req.body.images;
     }
-)
+  
+    const imagesLink = [];
+    for (let i = 0; i < images.length; i++) {
+      
+      const result = await cloudinary.v2.uploader.upload(images[i], {
+        folder: "products",
+      });
+      console.log("uploaded");
+      imagesLink.push({
+        public_id: result.public_id,
+        url: result.secure_url,
+      });
+    }
+  
+    req.body.images = imagesLink;
+    req.body.user = req.user.id;
+    const product = await Product.create(req.body);
+    res.status(200).json({
+      success: true,
+      product,
+    });
+  });
+  
 
 // get all Products
 exports.getAllProducts=catchAsyncError(
     async (req,res,next)=>{
-        const resultPerPage=8
+
+        let sortBy = req.query.sortBY; // assuming this is the input value, 'name-asc' means sort by product name A-Z, 'name-desc' means sort by product name Z-A
+
+        let sortCriteria = {}; // create an empty object to hold the sorting criteria
+
+        // add the sorting criteria based on the input value
+        if (sortBy === 'rating-desc') {
+        sortCriteria.total_rating = -1; // sort by rating high to low
+        } else if (sortBy === 'rating-asc') {
+            sortCriteria.total_rating = 1; // sort by newness
+        }  else if (sortBy === 'newness-desc') {
+        sortCriteria.cratedAt = -1; // sort by newness
+        } else if (sortBy === 'newness-asc') {
+            sortCriteria.cratedAt = 1; // sort by oldness
+        }else if (sortBy === 'price-asc') {
+        sortCriteria.price = 1; // sort by price low to high
+        } else if (sortBy === 'price-desc') {
+        sortCriteria.price = -1; // sort by price high to low
+        } else if (sortBy === 'name-asc') {
+        sortCriteria.name = 1; // sort by product name A-Z
+        } else if (sortBy === 'name-desc') {
+        sortCriteria.name = -1; // sort by product name Z-A
+        }
+        else{
+            sortCriteria.cratedAt = 1;
+        }
+        const resultPerPage=req.query.resultPerPage
         const productCount=await Product.countDocuments()
-        const apiFeatures=new Apifeatures(Product.find(), req.query).search().filter().sortAsNew(resultPerPage)
+        console.log(sortCriteria);
+        const apiFeatures=new Apifeatures(Product.find().sort(sortCriteria), req.query).search().filter().sortAsNew(resultPerPage)
 
         let products= await apiFeatures.query.clone()
         const filterProductsLength=products.length
@@ -63,7 +89,38 @@ exports.getAllProducts=catchAsyncError(
 // get all Products --Admin
 exports.getAllProductsAdmin=catchAsyncError(
     async (req,res,next)=>{
-        const products=await Product.find()
+        
+        let sortBy = req.query.sortBY; // assuming this is the input value, 'name-asc' means sort by product name A-Z, 'name-desc' means sort by product name Z-A
+
+        let sortCriteria = {}; // create an empty object to hold the sorting criteria
+
+        // add the sorting criteria based on the input value
+        if (sortBy === 'rating-desc') {
+        sortCriteria.total_rating = -1; // sort by rating high to low
+        } else if (sortBy === 'rating-asc') {
+            sortCriteria.total_rating = 1; // sort by newness
+        }  else if (sortBy === 'newness-desc') {
+        sortCriteria.cratedAt = -1; // sort by newness
+        } else if (sortBy === 'newness-asc') {
+            sortCriteria.cratedAt = 1; // sort by oldness
+        }else if (sortBy === 'price-asc') {
+        sortCriteria.price = 1; // sort by price low to high
+        } else if (sortBy === 'price-desc') {
+        sortCriteria.price = -1; // sort by price high to low
+        } else if (sortBy === 'name-asc') {
+        sortCriteria.name = 1; // sort by product name A-Z
+        } else if (sortBy === 'name-desc') {
+        sortCriteria.name = -1; // sort by product name Z-A
+        }
+        else{
+            sortCriteria.cratedAt = 1;
+        }
+        const name = req.query.keyword;
+        console.log(name ,"name");
+		// Define the filter object based on the name query parameter
+		const filter = name ? { name: { $regex: name, $options: "i" } } : {};
+        console.log(filter, sortCriteria);
+        const products=await Product.find(filter).sort(sortCriteria)
         res.status(200).json({
             success:true,
             products
@@ -154,7 +211,7 @@ exports.delteProduct=catchAsyncError(
 exports.getProductDetails =catchAsyncError(
     async(req,res,next)=>{
         const productCount=await Product.countDocuments()
-        const product= await Product.findById(req.params.id);
+        const product= await Product.findById(req.params.id).populate("reviews.user", "avatar");
         if(!product)
         {
             return next(new ErrorHandler("product not found",404))

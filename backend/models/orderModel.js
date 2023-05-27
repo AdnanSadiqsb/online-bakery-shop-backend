@@ -91,14 +91,18 @@ const orderSchema= new mongoose.Schema({
         reuired:true
     },
     ordernote:{
-        type:String
+        type:String,
+        default:"Please let us know if you have any questions or concerns regarding your order, and our customer service team will be happy to assist you."
     },
     orderStatus:{
         type:String,
         required:true,
         default:'processing'
     },
-    deliverdAt:Date,
+    deliverdAt:{
+        type:Date
+    },
+    
     createdAt:{
         type:Date,
         default:Date.now()
