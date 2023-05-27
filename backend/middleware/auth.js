@@ -13,7 +13,6 @@ exports.isAuthenciatedUser=catchAsyncError(
             const decodeData=jswt.verify(token,process.env.JWT_SECRETE);
             
             req.user =await User.findById(decodeData.id)
-            console.log(req.user)
             next()
      
 

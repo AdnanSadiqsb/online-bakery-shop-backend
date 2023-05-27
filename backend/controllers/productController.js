@@ -20,7 +20,7 @@ exports.createProduct = catchAsyncError(async (req, res, next) => {
       const result = await cloudinary.v2.uploader.upload(images[i], {
         folder: "products",
       });
-      console.log("uploaded");
+
       imagesLink.push({
         public_id: result.public_id,
         url: result.secure_url,
@@ -68,7 +68,7 @@ exports.getAllProducts=catchAsyncError(
         }
         const resultPerPage=req.query.resultPerPage
         const productCount=await Product.countDocuments()
-        console.log(sortCriteria);
+
         const apiFeatures=new Apifeatures(Product.find().sort(sortCriteria), req.query).search().filter().sortAsNew(resultPerPage)
 
         let products= await apiFeatures.query.clone()
@@ -116,10 +116,9 @@ exports.getAllProductsAdmin=catchAsyncError(
             sortCriteria.cratedAt = 1;
         }
         const name = req.query.keyword;
-        console.log(name ,"name");
+
 		// Define the filter object based on the name query parameter
 		const filter = name ? { name: { $regex: name, $options: "i" } } : {};
-        console.log(filter, sortCriteria);
         const products=await Product.find(filter).sort(sortCriteria)
         res.status(200).json({
             success:true,

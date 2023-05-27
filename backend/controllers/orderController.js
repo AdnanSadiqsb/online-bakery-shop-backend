@@ -169,10 +169,10 @@ exports.updateOrderStatus=catchAsyncError(
 
             order.deliverdAt=Date.now()
             order.paymentInfo.status='Paid'
-            console.log("order deliverd");
+           
         }
         await order.save({validateBeforeSave:false})
-        console.log("saved");
+      
         res.status(200).json(
             {
               success:true,
@@ -186,7 +186,6 @@ async function updateStock(id,quantity){
     try{
 
         const product = await Product.findById(id)
-        console.log(product)
         product.stock -= quantity
         await product.save({validateBeforeSave:false})
     }catch{

@@ -9,20 +9,18 @@ const cloudnary=require('cloudinary')
 exports.registerUser=catchAsyncError(
 
     async(req,res,next)=>{
-        console.log("register apu called")
-        // upload user image on server
-        console.log(req.body.email)
+
         const myCloud=await cloudnary.v2.uploader.upload(req.body.avatar,{
             folder:"avtars",
             width:150,
             crop:"scale"
         })
-        console.log(req.body.email)
+     
         const {name, email,password}=req.body
         const oldUser= await User.find({"email":email})
         if(oldUser.length!==0)
         {   
-            console.log("user Exist")
+
             return(res.status(400).json({success:false,message:"user with this email already exist"}))
         }
         const user= await User.create({
@@ -95,7 +93,7 @@ exports.forgotPassword=catchAsyncError(
         const resetToken=user.getResetPassToken()
     
         await user.save({vaildateBeforeSave:false}) 
-        console.log(user)
+
         const resetPassURL= `${process.env.FRONTEND_URL}password/reset/${resetToken}`
 
         // const message =`<h1> your rest password token : - \n\n ${resetPassURL} \n\n if you have not requsted this email then please ignore it</h1>`
@@ -397,7 +395,6 @@ exports.forgotPassword=catchAsyncError(
 exports.resetPassowrd=catchAsyncError(
     async(req,res,next)=>{
         //creating token hash
-        console.log(req.params.token)
         let  resetPasswordToken = crypto.createHash("sha256").update(req.params.token).digest("hex")
         const user=await User.findOne({resetPasswordToken,
         resetPasswordExpire:{$gt:Date.now()}
