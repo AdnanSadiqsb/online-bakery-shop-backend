@@ -4,9 +4,9 @@ const jswt= require('jsonwebtoken')
 const User= require('../models/userModel')
 exports.isAuthenciatedUser=catchAsyncError(
     async (req,res,next)=>{
-        
-
-            const {token}=req.cookies;
+             const authHeader = req.headers.authorization;
+            // const {token}=req.cookies;
+            const token = authHeader.split(" ")[1];
             if(!token){
                 return next(new ErrorHandler("Please login to access this",401))
             }
