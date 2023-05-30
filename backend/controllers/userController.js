@@ -9,7 +9,7 @@ const cloudnary=require('cloudinary')
 exports.registerUser=catchAsyncError(
 
     async(req,res,next)=>{
-
+		console.log(req.body);
         const myCloud=await cloudnary.v2.uploader.upload(req.body.avatar,{
             folder:"avtars",
             width:150,
